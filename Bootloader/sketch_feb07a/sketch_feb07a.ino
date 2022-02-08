@@ -1,7 +1,7 @@
 #include <WiFi.h>
  
-const char* ssid = "Livebox-3f60";
-const char* password =  "AA7CAD6FED74FAC79D3ED4E3C2";
+const char* ssid = "";
+const char* password =  "";
 
 const uint16_t port = 8090;
 const char * host = "192.168.1.25";
