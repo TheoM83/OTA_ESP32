@@ -81,7 +81,7 @@ park.append(device)
 print(park)
 
 
-f_location = 'sketch_feb07a.ino.esp32.bin'
+f_location = 'Blink.ino.esp32.bin'
 
 file = open(f_location,'rb')
 size = os.path.getsize(f_location)
