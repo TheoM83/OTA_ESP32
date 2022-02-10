@@ -4,7 +4,7 @@
 #include <iostream>
 
 //DEVICE INFORMATIONS
-const char* ID = "UID123";
+const char* ID = WiFi.macAddress().c_str();
 const char* Name = "device-TEST";
 const char* Version = "1";
 
