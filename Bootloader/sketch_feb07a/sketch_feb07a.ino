@@ -2,29 +2,33 @@
 #include <Update.h>
 #include <string.h>
 #include <iostream>
- 
-const char* ssid = "";
-const char* password =  "";
-
-const uint16_t port = 8090;
-const char * host = "192.168.1.27";
 
 //DEVICE INFORMATIONS
 const char* ID = "UID123";
 const char* Name = "device-TEST";
 const char* Version = "1";
 
+//REMOTE SERVER
+const char * host = "192.168.1.27";
+const uint16_t port = 8090;
+
+//WIFI INFORMATIONS
+const char* ssid = "";
+const char* password =  "";
+
 void setup()
 {
   //Connect to the Wifi
   Serial.begin(115200);
   WiFi.begin(ssid, password);
+  Serial.println("Connecting to "+String(ssid)+'\n');
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
-    Serial.println("///Connecting to the Wifi///");
+    Serial.print(".");
   }
-  Serial.print("  --> Connected as : ");
+  Serial.print('\n');
+  Serial.print("Connected as : ");
   Serial.println(WiFi.localIP());
 
   //Connect to the Server
@@ -37,7 +41,8 @@ void setup()
     }
     else
     {
-        Serial.println("Connected to server successful!");
+        //Sending device information
+        Serial.println("Connected to "+String(host));
         Serial.println("Sending information");
         client.write(ID);
         delay(200);
@@ -45,13 +50,15 @@ void setup()
         delay(200);
         client.write(Version);
         delay(200);
+
+        //Receiving update information
         Serial.println("Checking Firmware");
-        
         String stringFileSize = client.readStringUntil('\n');
         Serial.println(stringFileSize);
+
+        //Starting the update
         int fileSize = atoi(stringFileSize.c_str());
         bool start = Update.begin(fileSize);
-
         if (start) {
         Serial.println("Downloading and applying OTA update...");
         size_t written = Update.writeStream(client);
