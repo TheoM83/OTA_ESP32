@@ -1,4 +1,6 @@
 import socket
+import os
+from time import sleep
 
 class Park:
 
@@ -57,28 +59,43 @@ park.load()
 
 print("Listening...")
 content = ""
-while True:
-    client, addr = s.accept()
-    content = client.recv(32)
-    content = content.decode("utf-8")
-    ID = content
-    
-    content = client.recv(32)
-    content = content.decode("utf-8")
-    Name = content
-    
-    content = client.recv(32)
-    content = content.decode("utf-8")
-    Version = content
-    
-    IP = addr[0]
-    
-    device = Device(ID,Name,Version,IP)
-    device.verify()
-    
-    park.append(device)
-    print(park)
+client, addr = s.accept()
+content = client.recv(32)
+content = content.decode("utf-8")
+ID = content
 
+content = client.recv(32)
+content = content.decode("utf-8")
+Name = content
+
+content = client.recv(32)
+content = content.decode("utf-8")
+Version = content
+
+IP = addr[0]
+
+device = Device(ID,Name,Version,IP)
+device.verify()
+
+park.append(device)
+print(park)
+
+
+f_location = 'sketch_feb07a.ino.esp32.bin'
+
+file = open(f_location,'rb')
+size = os.path.getsize(f_location)
+size = str(size)+'\n'
+print(size)
+client.send(size.encode())
+
+print('Sending...')
+data = file.read(1024)
+while (data):
+    print("sending")
+    client.send(data)
+    data = file.read(1024)
+file.close()
+print("Firware sent")
 print("Closing connection")
 client.close()
-
