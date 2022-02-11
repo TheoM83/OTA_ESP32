@@ -1,102 +1,59 @@
 import socket
 import os
 from time import sleep
-import Database.py
+from Database import Database
+from Device import Device
 
-class Park:
+#connecting to database
+print("Connecting to database")
+db = Database('root', 'MyP4ssMySqL','127.0.0.1','esp32_maintainer')
 
-    devices = [];
-    
-    def load(self):
-        return
-        
-    def append(self, Device):
-        self.devices.append(Device)
-        
-    def filterName(self, Name):
-        res = []
-        for device in self.devices:
-            if device.Name == Name:
-                res.append(device)
-        return res
-            
-        
-    def filterVersion(self, Version):
-        res = []
-        for device in self.devices:
-            if device.Version == Version:
-                res.append(device)
-        return res
-        
-    def __str__(self):
-        res = ""
-        for device in self.devices:
-            res = res + f"{device}\n\r"
-        return res
- 
-class Device:
-
-    def __init__(self, ID, Name, Version, IP):
-        self.ID = ID
-        self.Name = Name
-        self.Version = Version
-        self.IP = IP
-        
-    def verify(self):
-        return
-        
-    def __str__(self):
-        return f"ID : {self.ID} ; Name : {self.Name} ; Version : {self.Version} ; Last IP : {self.IP}"
-
-
+#binding and listening on the connection
 print("Starting server")
 s = socket.socket()         
 s.bind(('0.0.0.0', 8090 ))
-s.listen(0)                 
-
-print("Loading device park")
-park = Park()
-park.load()
-
+s.listen(0) 
 print("Listening...")
-content = ""
+
+#accepting connection and reading information
 client, addr = s.accept()
 content = client.recv(32)
 content = content.decode("utf-8")
-ID = content
-
-content = client.recv(32)
-content = content.decode("utf-8")
-Name = content
-
-content = client.recv(32)
-content = content.decode("utf-8")
-Version = content
-
+information = content.split("~")
 IP = addr[0]
 
-device = Device(ID,Name,Version,IP)
-device.verify()
+device = Device(information[0],information[1],information[2],IP)
+print(device)
 
-park.append(device)
-print(park)
+#check if the device is registered on the database
+if device.deviceVerified(db):
+    print(" ->Device Verified")
+    device.setActivity(db)
+    updateInfo = device.hasUpdate(db)
+    
+    #check available update
+    if updateInfo[0]:
 
+        #check the version
+        if updateInfo[3] > device.Version:
+            print(" ->Version "+str(updateInfo[3])+" available")
 
-f_location = 'Blink.ino.esp32.bin'
+            #check if it is a local file
+            if updateInfo[1] == "127.0.0.1":
+                print("     ->Local upload")
+                f_location = updateInfo[2]
+                file = open(f_location,'rb')
+                size = os.path.getsize(f_location)
+                size = str(size)+'\n'
+                client.send(size.encode())
 
-file = open(f_location,'rb')
-size = os.path.getsize(f_location)
-size = str(size)+'\n'
-print(size)
-client.send(size.encode())
+                print('Sending', end='')
+                data = file.read(1024)
+                while (data):
+                    print(".", sep='', end='', flush=True)
+                    client.send(data)
+                    data = file.read(1024)
+                file.close()
+                print("\nFirware sent")
 
-print('Sending...')
-data = file.read(1024)
-while (data):
-    print("sending")
-    client.send(data)
-    data = file.read(1024)
-file.close()
-print("Firware sent")
-print("Closing connection")
 client.close()

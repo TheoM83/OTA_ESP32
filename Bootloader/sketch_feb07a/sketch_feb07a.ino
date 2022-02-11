@@ -4,17 +4,17 @@
 #include <iostream>
 
 //DEVICE INFORMATIONS
-const char* ID = WiFi.macAddress().c_str();
-const char* Name = "device-TEST";
-const char* Version = "1";
+String ID = WiFi.macAddress();
+String Name = "device-TEST";
+String Version = "1";
 
 //REMOTE SERVER
 const char * host = "192.168.1.27";
 const uint16_t port = 8090;
 
 //WIFI INFORMATIONS
-const char* ssid = "";
-const char* password =  "";
+const char* ssid = "SFR_1508";
+const char* password =  "shraidhagrodwermiof4";
 
 
 //FUNCTIONS
@@ -46,11 +46,7 @@ void OTA()
       //Sending device information
       Serial.println("Connected to "+String(host));
       Serial.println("Sending information");
-      client.println(ID);
-      delay(200);
-      client.println(Name);
-      delay(200);
-      client.println(Version);
+      client.println(ID+"~"+Name+"~"+Version);
       delay(200);
 
       //Receiving update information

@@ -2,10 +2,10 @@ import mysql.connector
 
 class Database:
 
-    def __init__(self):
-        self.mydb = mysql.connector.connect(user='root', password='MyP4ssMySqL',
-                                  host='127.0.0.1',
-                                  database='esp32_maintainer')
+    def __init__(self, user, password, host, database):
+        self.mydb = mysql.connector.connect(user=user, password=password,
+                                  host=host,
+                                  database=database)
 
     def close(self):
         mydb.close()
@@ -19,7 +19,7 @@ class Database:
     def listUpdates(self):
         res = ""
         mycursor = self.mydb.cursor()
-        mycursor.execute("select id, device_name, version, server_ip, server_location from update_location GROUP BY device_name ORDER BY device_name, version DESC")
+        mycursor.execute("select id, device_name, version, server_ip, server_location, automatic from update_location ORDER BY device_name, version DESC")
         myresult = mycursor.fetchall()
         return myresult
 
@@ -79,28 +79,51 @@ class Database:
         mycursor.execute(sql, val)
         self.mydb.commit()
         
+    def uidToId(self, uid):
+        mycursor = self.mydb.cursor()
+        sql = "select id from device where uid = %s"
+        val = ([uid])
+        mycursor.execute(sql, val)
+        myresult = mycursor.fetchone()
+        return myresult[0]
+
     def verifyDevice(self, uid, deviceName):
         mycursor = self.mydb.cursor()
-        sql = "select id, name, uid from device where name = %s and uid = %s"
-        val = (uid, deviceName)
+        sql = "select id from device where name = %s and uid = %s"
+        val = (deviceName, uid)
         mycursor.execute(sql, val)
         myresult = mycursor.fetchall()
         if (len(myresult) > 0):
             return True
         return False
+
+    def hasUpdate(self, deviceName, version):
+        mycursor = self.mydb.cursor()
+        sql = "select server_ip, server_location, version from update_location where device_name = %s and automatic = True and version > %s order by version DESC"
+        val = (deviceName, version)
+        mycursor.execute(sql, val)
+        myresult = mycursor.fetchone()
+        if myresult:
+            return [True, myresult[0], myresult[1], myresult[2]]
+        return [False]
+        
  
 
-#   EXAMPLE
- 
-#db = Database()
-#db.insertDevice("xxx","xxx")
-#db.insertUpdate("127.0.0.1", "/xxx", "xxx", 1.1, False)
-#db.insertActivity(1,"127.0.0.1",1, "2000-1-1" )
-#print(db.verifyDevice("xxx", "xxx"))
-#db.removeUpdate(1)
-#db.removeActivity(1)
-#db.removeActivityDeviceId(1)
-#db.removeDevice(1)
-#print(db.listDevices())
-#print(db.listUpdates())
-#print(db.listActivity())
+
+"""
+/// EXAMPLE
+
+db = Database('root', 'MyP4ssMySqL','127.0.0.1','esp32_maintainer')
+db.insertDevice("xxx","xxx")
+db.insertUpdate("127.0.0.1", "/xxx", "xxx", 1.1, True)
+print(db.hasUpdate("xxx", 1))
+db.insertActivity(1,"127.0.0.1",1, "2000-1-1" )
+print(db.verifyDevice("xxx", "xxx"))
+db.removeUpdate(1)
+db.removeActivity(1)
+db.removeActivityDeviceId(1)
+db.removeDevice(1)
+print(db.listDevices())
+print(db.listUpdates())
+print(db.listActivity())
+"""
