@@ -14,10 +14,14 @@
 ### How to use :
   - Clone the project
   - Import the MYSQL database
-  - Modify the Python Server.py parameters depending on your Mysql database authentification
-  - Modify the ESP32 parameters depending the device and networking informations you want
   - Insert in the database your device information and the updates.
+  - Modify the Python Server.py parameters depending on your Mysql database authentification and execute it.
+  - Modify the ESP32 parameters depending the device and networking informations you want and upload the code on your device
+  
+### Known bugs :
+  - Memory corruption if too much OTA updates are done or the updates are not finished... To resolve just upload the code with the cable.
   
 ### Upcoming : 
+  - Complete installation guide
   - Completely secure transactions
   - GUI
