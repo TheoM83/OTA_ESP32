@@ -8,11 +8,11 @@ class Database:
                                   database=database)
 
     def close(self):
-        mydb.close()
+        self.mydb.close()
 
     def listDevices(self):
         mycursor = self.mydb.cursor()
-        mycursor.execute("select id, name, uid from device")
+        mycursor.execute("select id, name, uid, authorized from device")
         myresult = mycursor.fetchall()
         return myresult
 
@@ -58,10 +58,10 @@ class Database:
         myresult = mycursor.fetchall()
         return myresult       
 
-    def insertDevice(self, uid, deviceName):
+    def insertDevice(self, uid, deviceName, authorized):
         mycursor = self.mydb.cursor()
-        sql = "INSERT INTO device (name, uid) VALUES (%s, %s)"
-        val = (uid, deviceName)
+        sql = "INSERT INTO device (name, uid) VALUES (%s, %s, %s)"
+        val = (uid, deviceName, authorized)
         mycursor.execute(sql, val)
         self.mydb.commit()
         
@@ -96,6 +96,21 @@ class Database:
         if (len(myresult) > 0):
             return True
         return False
+
+    def autorize(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "update device set authorized = True where %s = 10"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def isAuthorized(self, deviceName, uid):
+        mycursor = self.mydb.cursor()
+        sql = "select authorized from device where name = %s and uid = %s"
+        val = (deviceName, uid)
+        mycursor.execute(sql, val)
+        myresult = mycursor.fetchone()
+        return myresult[0]
 
     def hasUpdate(self, deviceName, version):
         mycursor = self.mydb.cursor()

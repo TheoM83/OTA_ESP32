@@ -23,37 +23,45 @@ information = content.split("~")
 IP = addr[0]
 
 device = Device(information[0],information[1],information[2],IP)
+device.setActivity(db)
 print(device)
 
 #check if the device is registered on the database
-if device.deviceVerified(db):
-    print(" ->Device Verified")
-    device.setActivity(db)
-    updateInfo = device.hasUpdate(db)
+if device.isRegistered(db):
+    print(" ->Device Registered")
     
-    #check available update
-    if updateInfo[0]:
+    #check if the device is authorized
+    if device.isAuthorized(db):
+        print("  ->Device Authorized")
 
-        #check the version
-        if updateInfo[3] > device.Version:
-            print(" ->Version "+str(updateInfo[3])+" available")
+        #check available update
+        updateInfo = device.hasUpdate(db)
+        if updateInfo[0]:
 
-            #check if it is a local file
-            if updateInfo[1] == "127.0.0.1":
-                print("     ->Local upload")
-                f_location = updateInfo[2]
-                file = open(f_location,'rb')
-                size = os.path.getsize(f_location)
-                size = str(size)+'\n'
-                client.send(size.encode())
+            #check the version
+            if updateInfo[3] > device.Version:
+                print("   ->Version "+str(updateInfo[3])+" available")
 
-                print('Sending', end='')
-                data = file.read(1024)
-                while (data):
-                    print(".", sep='', end='', flush=True)
-                    client.send(data)
+                #check if it is a local file
+                if updateInfo[1] == "127.0.0.1":
+                    print("     ->Local upload")
+                    f_location = updateInfo[2]
+                    file = open(f_location,'rb')
+                    size = os.path.getsize(f_location)
+                    size = str(size)+'\n'
+                    client.send(size.encode())
+
+                    print('Sending', end='')
                     data = file.read(1024)
-                file.close()
-                print("\nFirware sent")
+                    while (data):
+                        print(".", sep='', end='', flush=True)
+                        client.send(data)
+                        data = file.read(1024)
+                    file.close()
+                    print("\nFirmware sent")
+    else:
+        print("not authorized")
 
+else:
+    device.addDevice(db)
 client.close()

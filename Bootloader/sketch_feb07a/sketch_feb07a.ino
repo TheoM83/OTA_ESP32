@@ -21,6 +21,7 @@ const char* password =  "shraidhagrodwermiof4";
 
 void WifiConnect(){
   Serial.begin(115200);
+  Serial.println("My mac address "+String(ID)+'\n');
   WiFi.begin(ssid, password);
   Serial.println("Connecting to "+String(ssid)+'\n');
   while (WiFi.status() != WL_CONNECTED) 

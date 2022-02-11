@@ -9,9 +9,15 @@ class Device:
         self.Name = Name
         self.Version = Decimal(Version)
         self.IP = IP
-        
-    def deviceVerified(self, database):
+
+    def addDevice(self, database):
+        database.insertDevice(self.ID, self.Name, False)
+
+    def isRegistered(self, database):
         return database.verifyDevice(self.ID, self.Name)
+
+    def isAuthorized(self, database):
+        return database.isAuthorized(self.Name, self.ID)
         
     def hasUpdate(self, database):
         return database.hasUpdate(self.Name, self.Version)
