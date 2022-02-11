@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `esp32_maintainer` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `esp32_maintainer`;
 -- MySQL dump 10.13  Distrib 8.0.28, for Win64 (x86_64)
 --
 -- Host: localhost    Database: esp32_maintainer
@@ -28,8 +26,9 @@ CREATE TABLE `device` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `uid` varchar(100) DEFAULT NULL,
+  `authorized` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,6 +37,7 @@ CREATE TABLE `device` (
 
 LOCK TABLES `device` WRITE;
 /*!40000 ALTER TABLE `device` DISABLE KEYS */;
+INSERT INTO `device` VALUES (10,'device-TEST','AC:67:B2:36:71:E4',1),(11,'x1','x1',1),(12,'x2','x2',0);
 /*!40000 ALTER TABLE `device` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +57,7 @@ CREATE TABLE `device_activity` (
   PRIMARY KEY (`id`),
   KEY `id_device` (`id_device`),
   CONSTRAINT `device_activity_ibfk_1` FOREIGN KEY (`id_device`) REFERENCES `device` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,6 +66,7 @@ CREATE TABLE `device_activity` (
 
 LOCK TABLES `device_activity` WRITE;
 /*!40000 ALTER TABLE `device_activity` DISABLE KEYS */;
+INSERT INTO `device_activity` VALUES (38,10,'192.168.1.98','1','2022-02-11'),(39,10,'192.168.1.98','1','2022-02-11'),(40,10,'192.168.1.98','1','2022-02-11'),(41,10,'192.168.1.98','1','2022-02-11'),(42,10,'192.168.1.98','1','2022-02-11'),(43,10,'192.168.1.98','1','2022-02-11');
 /*!40000 ALTER TABLE `device_activity` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -84,7 +85,7 @@ CREATE TABLE `update_location` (
   `version` double DEFAULT NULL,
   `automatic` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,6 +94,7 @@ CREATE TABLE `update_location` (
 
 LOCK TABLES `update_location` WRITE;
 /*!40000 ALTER TABLE `update_location` DISABLE KEYS */;
+INSERT INTO `update_location` VALUES (7,'127.0.0.1','Blink.ino.esp32.bin','device-TEST',2,1);
 /*!40000 ALTER TABLE `update_location` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -105,4 +107,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-02-11  0:43:25
+-- Dump completed on 2022-02-11 16:47:35
