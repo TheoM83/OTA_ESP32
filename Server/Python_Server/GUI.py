@@ -1,14 +1,18 @@
-from asyncio.windows_events import NULL
 import PySimpleGUI as sg
 from Database import Database
 from decimal import Decimal
 
-db = Database('root', 'MyP4ssMySqL','127.0.0.1','esp32_maintainer')
+#PARAMETERS
+Database_user = 'root'
+Database_password = 'MyP4ssMySqL'
+Database_host = '127.0.0.1'
+Database_name = 'esp32_maintainer'
+
+#CODE
+db = Database(Database_user, Database_password, Database_host, Database_name)
 devices = db.listDevices()
 activities = db.listActivity()
 updates = db.listUpdates()
-
-window = None
 
 layout1 = []
 layout2 = []
