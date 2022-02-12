@@ -1,6 +1,5 @@
 import socket
 import os
-from time import sleep
 from Database import Database
 from Device import Device
 

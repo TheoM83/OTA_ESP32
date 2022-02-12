@@ -97,9 +97,44 @@ class Database:
             return True
         return False
 
+    def deleteDevice(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "delete from device where id = %s"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def deleteDevice(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "delete from update_location where id = %s"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def setAutomatic(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "update update_location set automatic = True where id = %s"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def removeAutomatic(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "update update_location set automatic = False where id = %s"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
     def autorize(self, id):
         mycursor = self.mydb.cursor()
-        sql = "update device set authorized = True where %s = 10"
+        sql = "update device set authorized = True where id = %s"
+        val = ([id])
+        mycursor.execute(sql, val)
+        self.mydb.commit()
+
+    def unAutorize(self, id):
+        mycursor = self.mydb.cursor()
+        sql = "update device set authorized = False where id = %s"
         val = ([id])
         mycursor.execute(sql, val)
         self.mydb.commit()

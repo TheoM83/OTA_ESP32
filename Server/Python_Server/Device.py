@@ -1,5 +1,4 @@
 from datetime import datetime
-from Database import Database
 from decimal import Decimal
 
 class Device:
