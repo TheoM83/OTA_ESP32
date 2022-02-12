@@ -3,14 +3,14 @@
 #include <string.h>
 #include <iostream>
 
+//REMOTE PYTHON SERVER
+const char * host = "192.168.1.27";
+const uint16_t port = 8090;
+
 //DEVICE INFORMATIONS
 String ID = WiFi.macAddress();
 String Name = "device-TEST";
 String Version = "1";
-
-//REMOTE SERVER
-const char * host = "192.168.1.27";
-const uint16_t port = 8090;
 
 //WIFI INFORMATIONS
 const char* ssid = "SFR_1508";
@@ -96,13 +96,12 @@ void OTA()
 
 void setup()
 {
-  //Connect to the Wifi
   WifiConnect();
-  //Performing OTA
   OTA();
+  //...
 }
  
 void loop()
 {
-
+  //...
 }
