@@ -9,50 +9,37 @@ Database_host = '127.0.0.1'
 Database_name = 'esp32_maintainer'
 
 #CODE
-db = Database(Database_user, Database_password, Database_host, Database_name)
-devices = db.listDevices()
-activities = db.listActivity()
-updates = db.listUpdates()
 
-layout1 = []
-layout2 = []
-layout3 = []
-
-devices_id = []
-updates_id = []
-visible_device_button = []
-visible_updates_button = []
-
-def deleteDevice(id):
+def deleteDevice(db, id, devices_id,layout1):
     for item in layout1[id+1]:
         item.update(visible=False)
     db.deleteDevice(devices_id[id])
 
-def deleteUpdate(id):
+def deleteUpdate(db, id,updates_id, layout3):
     for item in layout3[id+2]:
         item.update(visible=False)
     db.deleteDevice(updates_id[id])
 
-def unAuthorize(id):
+def unAuthorize(db, id, devices_id, visible_device_button):
     db.unAutorize(devices_id[id])
     visible_device_button[id].update(visible=False)
 
-def authorize(id):
+def authorize(db, id, devices_id,visible_device_button):
     db.autorize(devices_id[id])
     visible_device_button[id].update(visible=False)
 
-def activate(id):
+def activate(db, id, updates_id,visible_updates_button):
     db.setAutomatic(updates_id[id])
     visible_updates_button[id].update(visible=False)
 
-def deActivate(id):
+def deActivate(db, id, updates_id, visible_updates_button):
     db.removeAutomatic(updates_id[id])
     visible_updates_button[id].update(visible=False)
 
-def uploadUpdate(Name, Version, Location, Path):
+def uploadUpdate(db, Name, Version, Location, Path):
     db.insertUpdate(Location, Path, Name, Decimal(Version), False)
 
-def updateDeviceLayout():
+def updateDeviceLayout(devices, devices_id, visible_device_button):
     layout = []
     row1 = []
     row1.append(sg.Text(" ", size=(4, 1)))
@@ -77,7 +64,7 @@ def updateDeviceLayout():
         layout.append(row2)
     return layout
 
-def updateActivityLayout():
+def updateActivityLayout(activities):
     layout = []
     row1 = []
     row1.append(sg.Text("Time", size=(15, 1)))
@@ -96,7 +83,7 @@ def updateActivityLayout():
         layout.append(row2)
     return layout
 
-def updateUpdateLayout():
+def updateUpdateLayout(updates, updates_id, visible_updates_button):
     layout = []
     row1 = []
     row1.append(sg.Text(" ", size=(4, 1)))
@@ -135,23 +122,38 @@ def updateUpdateLayout():
         layout.append(row2)
 
     return layout
-
-layout1=updateDeviceLayout()
-
-layout2=updateActivityLayout()
     
-layout3=updateUpdateLayout()
-
-#Define Layout with Tabs         
-tabgrp = [[sg.TabGroup([[
-    sg.Tab('Devices', layout1, title_color='Red'),
-    sg.Tab('Activities', layout2,title_color='Blue'),
-    sg.Tab('Updates', layout3,title_color='Black')
-    ]], 
-    tab_location='centertop',title_color='Black', tab_background_color='White',selected_title_color='Blue',selected_background_color='Grey', border_width=5,size=(700, 550)),sg.Button('REFRESH', size=(10,5))]]  
-        
 #Define Window
 def GUI():
+
+    db = Database(Database_user, Database_password, Database_host, Database_name)
+    devices = db.listDevices()
+    activities = db.listActivity()
+    updates = db.listUpdates()
+
+    devices_id = []
+    updates_id = []
+    visible_device_button = []
+    visible_updates_button = []
+
+    layout1 = []
+    layout2 = []
+    layout3 = []
+
+    layout1=updateDeviceLayout(devices, devices_id, visible_device_button)
+
+    layout2=updateActivityLayout(activities)
+        
+    layout3=updateUpdateLayout(updates, updates_id,visible_updates_button )
+
+    #Define Layout with Tabs         
+    tabgrp = [[sg.TabGroup([[
+    sg.Tab('Devices', layout1),
+    sg.Tab('Activities', layout2),
+    sg.Tab('Updates', layout3)
+    ]], 
+    tab_location='centertop',title_color='Black', tab_background_color='White',selected_title_color='Blue',selected_background_color='Grey', border_width=5,size=(700, 550)),sg.Button('REFRESH', size=(10,5))]]  
+    
     window =sg.Window("OTA_Insider",tabgrp)
     #Read  values entered by user
     while True:             # Event Loop
@@ -159,33 +161,39 @@ def GUI():
         event, values = window.Read()
         if event in (None, 'Exit'):
             window.close()    
-            break
+            return 1
         if callable(event):
             event()
         elif event[0:6] == 'Remove':
             id = int(event[7:])
-            unAuthorize(id)
+            unAuthorize(db,id, devices_id, visible_device_button)
         elif event[0:3] == 'Add':
             id = int(event[4:])
-            authorize(id)
+            authorize(db,id,devices_id, visible_device_button)
         elif event[0:8] == 'Activate':
             id = int(event[9:])
-            activate(id)
+            activate(db,id, updates_id, visible_updates_button)
         elif event[0:10] == 'Deactivate':
             id = int(event[11:])
-            deActivate(id)
+            deActivate(db, id,updates_id, visible_updates_button)
         elif event[0:12] == 'DeleteDevice':
             id = int(event[13:])
-            deleteDevice(id)
+            deleteDevice(db,id,devices_id, layout1)
         elif event[0:12] == 'DeleteUpdate':
             id = int(event[13:])
-            deleteUpdate(id)
+            deleteUpdate(db,id,updates_id, layout3)
         elif event[0:7] == 'REFRESH':
-            window.close()    
-            break
+            window.close()  
+            return 2
         elif event[0:6] == 'Upload':
-            uploadUpdate(values['-Name-'],values['-Version-'],values['-Location-'],values['-Path-'])
+            try:
+                uploadUpdate(db, values['-Name-'],values['-Version-'],values['-Location-'],values['-Path-'])
+            except:
+                sg.Popup('You have made a mistake in your update', title='Error')
+
             
     #access all the values and if selected add them to a string
 
-GUI()
+res = GUI()
+while res == 2:
+    res = GUI()
