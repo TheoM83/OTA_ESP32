@@ -40,13 +40,14 @@ def uploadUpdate(db, Name, Version, Location, Path):
     db.insertUpdate(Location, Path, Name, Decimal(Version), False)
 
 def updateDeviceLayout(devices, devices_id, visible_device_button):
+    column = []
     layout = []
     row1 = []
     row1.append(sg.Text(" ", size=(4, 1)))
     row1.append(sg.Text("Name", size=(15, 1)))
     row1.append(sg.Text("ID", size=(15, 1)))
     row1.append(sg.Text("Authorization", size=(15, 1)))
-    layout.append(row1)
+    column.append(row1)
     i = -1
     for device in devices:
         i = i+1
@@ -61,18 +62,21 @@ def updateDeviceLayout(devices, devices_id, visible_device_button):
         else:
             visible_device_button.append(sg.Button('Add', key="Add-"+str(i), size=(15, 1)))
             row2.append(visible_device_button[i])
-        layout.append(row2)
+        column.append(row2)
+    layout = [[
+        sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
+    ]]
     return layout
 
 def updateActivityLayout(activities):
-    layout = []
+    column = []
     row1 = []
     row1.append(sg.Text("Time", size=(15, 1)))
     row1.append(sg.Text("Name", size=(15, 1)))
     row1.append(sg.Text("IP", size=(15, 1)))
     row1.append(sg.Text("ID", size=(15, 1)))
     row1.append(sg.Text("Version", size=(15, 1)))
-    layout.append(row1)
+    column.append(row1)
     for activity in activities:
         row2 = []
         row2.append(sg.Text(str(activity[4]), size=(15, 1)))
@@ -80,11 +84,15 @@ def updateActivityLayout(activities):
         row2.append(sg.Text(str(activity[2]), size=(15, 1)))
         row2.append(sg.Text(str(activity[1]), size=(15, 1)))
         row2.append(sg.Text(str(activity[3]), size=(15, 1)))
-        layout.append(row2)
+        column.append(row2)
+
+    layout = [[
+        sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
+    ]]
     return layout
 
 def updateUpdateLayout(updates, updates_id, visible_updates_button):
-    layout = []
+    column = []
     row1 = []
     row1.append(sg.Text(" ", size=(4, 1)))
     row1.append(sg.Text("Name", size=(15, 1), enable_events=True) )
@@ -92,7 +100,7 @@ def updateUpdateLayout(updates, updates_id, visible_updates_button):
     row1.append(sg.Text("Location", size=(15, 1)))
     row1.append(sg.Text("Path", size=(15, 1)))
     row1.append(sg.Text("Automatic", size=(15, 1)))
-    layout.append(row1)
+    column.append(row1)
 
     row3 = []
     row3.append(sg.Text(" ", size=(4, 1)))
@@ -101,7 +109,7 @@ def updateUpdateLayout(updates, updates_id, visible_updates_button):
     row3.append(sg.InputText(size=(16, 1),key='-Location-'))
     row3.append(sg.InputText(size=(16, 1),key='-Path-'))
     row3.append(sg.Button('Upload', key="Upload", size=(15, 1)))
-    layout.append(row3)
+    column.append(row3)
 
     i = -1
     for update in updates:
@@ -119,8 +127,10 @@ def updateUpdateLayout(updates, updates_id, visible_updates_button):
         else:
             visible_updates_button.append(sg.Button('Activate', key="Activate-"+str(i), size=(15, 1)))
             row2.append(visible_updates_button[i])
-        layout.append(row2)
-
+        column.append(row2)
+    layout = [[
+        sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
+    ]]
     return layout
     
 #Define Window
@@ -152,7 +162,7 @@ def GUI():
     sg.Tab('Activities', layout2),
     sg.Tab('Updates', layout3)
     ]], 
-    tab_location='centertop',title_color='Black', tab_background_color='White',selected_title_color='Blue',selected_background_color='Grey', border_width=5,size=(700, 550)),sg.Button('REFRESH', size=(10,5))]]  
+    tab_location='centertop',title_color='Black', tab_background_color='White',selected_title_color='Blue',selected_background_color='Grey', border_width=5,size=(800, 600)),sg.Button('REFRESH', size=(10,5))]]  
     
     window =sg.Window("OTA_Insider",tabgrp)
     #Read  values entered by user

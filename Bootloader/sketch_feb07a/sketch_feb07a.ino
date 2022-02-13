@@ -21,7 +21,7 @@ const char* password =  "shraidhagrodwermiof4";
 
 void WifiConnect(){
   Serial.begin(115200);
-  Serial.println("My mac address "+String(ID)+'\n');
+  Serial.println("My mac address : "+String(ID)+'\n');
   WiFi.begin(ssid, password);
   Serial.println("Connecting to "+String(ssid)+'\n');
   while (WiFi.status() != WL_CONNECTED) 
@@ -48,7 +48,7 @@ void OTA()
       Serial.println("Connected to "+String(host));
       Serial.println("Sending information");
       client.println(ID+"~"+Name+"~"+Version);
-      delay(200);
+      delay(400);
 
       //Receiving update information
       Serial.println("Checking Firmware");
@@ -56,6 +56,7 @@ void OTA()
       Serial.println(stringFileSize);
 
       //Starting the update
+      
       int fileSize = atoi(stringFileSize.c_str());
       bool start = Update.begin(fileSize);
       if (start) {
@@ -88,9 +89,10 @@ void OTA()
     } 
     else
     {
-      Serial.println("Not enough memory");
-      client.flush();
+      Serial.println("No firmware");
     }
+     
+    client.flush();  
   }
 }
 
