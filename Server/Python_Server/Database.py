@@ -104,7 +104,7 @@ class Database:
         mycursor.execute(sql, val)
         self.mydb.commit()
 
-    def deleteDevice(self, id):
+    def deleteUpdate(self, id):
         mycursor = self.mydb.cursor()
         sql = "delete from update_location where id = %s"
         val = ([id])

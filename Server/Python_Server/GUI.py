@@ -13,12 +13,12 @@ Database_name = 'esp32_maintainer'
 def deleteDevice(db, id, devices_id,layout1):
     for item in layout1[id+1]:
         item.update(visible=False)
-    db.deleteDevice(devices_id[id])
+    db.removeDevice(devices_id[id])
 
 def deleteUpdate(db, id,updates_id, layout3):
     for item in layout3[id+2]:
         item.update(visible=False)
-    db.deleteDevice(updates_id[id])
+    db.removeUpdate(updates_id[id])
 
 def unAuthorize(db, id, devices_id, visible_device_button):
     db.unAutorize(devices_id[id])
@@ -66,7 +66,7 @@ def updateDeviceLayout(devices, devices_id, visible_device_button):
     layout = [[
         sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
     ]]
-    return layout
+    return layout, column
 
 def updateActivityLayout(activities):
     column = []
@@ -89,7 +89,7 @@ def updateActivityLayout(activities):
     layout = [[
         sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
     ]]
-    return layout
+    return layout, column
 
 def updateUpdateLayout(updates, updates_id, visible_updates_button):
     column = []
@@ -131,7 +131,7 @@ def updateUpdateLayout(updates, updates_id, visible_updates_button):
     layout = [[
         sg.Column(column, scrollable=True,  vertical_scroll_only=True, size=(800, 600)),
     ]]
-    return layout
+    return layout, column
     
 #Define Window
 def GUI():
@@ -149,6 +149,9 @@ def GUI():
     layout1 = []
     layout2 = []
     layout3 = []
+    layout0 = [[
+        sg.Text("Welcome\n \n")
+    ]]
 
     layout1=updateDeviceLayout(devices, devices_id, visible_device_button)
 
@@ -158,9 +161,10 @@ def GUI():
 
     #Define Layout with Tabs         
     tabgrp = [[sg.TabGroup([[
-    sg.Tab('Devices', layout1),
-    sg.Tab('Activities', layout2),
-    sg.Tab('Updates', layout3)
+    sg.Tab('Home', layout0),
+    sg.Tab('Devices', layout1[0]),
+    sg.Tab('Activities', layout2[0]),
+    sg.Tab('Updates', layout3[0])
     ]], 
     tab_location='centertop',title_color='Black', tab_background_color='White',selected_title_color='Blue',selected_background_color='Grey', border_width=5,size=(800, 600)),sg.Button('REFRESH', size=(10,5))]]  
     
@@ -188,10 +192,10 @@ def GUI():
             deActivate(db, id,updates_id, visible_updates_button)
         elif event[0:12] == 'DeleteDevice':
             id = int(event[13:])
-            deleteDevice(db,id,devices_id, layout1)
+            deleteDevice(db,id,devices_id, layout1[1])
         elif event[0:12] == 'DeleteUpdate':
             id = int(event[13:])
-            deleteUpdate(db,id,updates_id, layout3)
+            deleteUpdate(db,id,updates_id, layout3[1])
         elif event[0:7] == 'REFRESH':
             window.close()  
             return 2
