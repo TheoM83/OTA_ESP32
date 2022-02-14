@@ -9,6 +9,10 @@
   - The GUI is easy to use and intuitive
   - The system is easy to set up and secure
   - The code is easy, coder-friendly, made to be upgraded
+
+### Prerequisites :
+  - Python3 (with *mysql-connector-python* and *pysimplegui*)
+  - MYSQL server
   
 ### How to use :
   - Clone the project
@@ -21,6 +25,6 @@
   - Memory corruption if too much OTA updates are done or the updates are not finished... To resolve just upload the code with the cable.
   
 ### Upcoming : 
-  - Using threading for multiple hosts
   - Completely secure transactions
+  - Transmitting WIFI authentification between each OTA
   - Complete installation guide
