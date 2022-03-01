@@ -2,9 +2,12 @@
 #include <Update.h>
 #include <string.h>
 #include <iostream>
+#include <Crypto.h>
+#include <AES.h>
+#include <string.h>
 
 //REMOTE PYTHON SERVER
-const char * host = "192.168.1.27";
+const char * host = "192.168.1.14";
 const uint16_t port = 8090;
 
 //DEVICE INFORMATIONS
@@ -13,9 +16,18 @@ String Name = "device-TEST";
 String Version = "1";
 
 //WIFI INFORMATIONS
-const char* ssid = "SFR_1508";
-const char* password =  "shraidhagrodwermiof4";
+const char* ssid = "Livebox-3f60";
+const char* password =  "AA7CAD6FED74FAC79D3ED4E3C2";
 
+//AES KEY
+byte key[32] = {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78};
+String padding_character = "/";
+
+//VARIABLES
+AES128 aes128;
+byte buffer[256];
+byte cipher_buffer[256];
+byte buffer_tmp[17];
 
 //FUNCTIONS
 
@@ -44,10 +56,28 @@ void OTA()
   }
   else
   {
+      aes128.setKey(key, aes128.keySize());
       //Sending device information
       Serial.println("Connected to "+String(host));
       Serial.println("Sending information");
-      client.println(ID+"~"+Name+"~"+Version);
+
+      //Prepare Message
+      String message = ""+ID+"~"+Name+"~"+Version;
+      while (message.length()%16 != 0)
+      {message = message + padding_character;}
+      message.getBytes(buffer, message.length()+1);
+
+      for (int i = 0; i < message.length(); i=i+16){
+        for (int j = 0 ; j < 16 ; j++){
+          buffer_tmp[j] = buffer[i+j];
+        }
+        aes128.encryptBlock(buffer_tmp, buffer_tmp);
+        for (int j = 0 ; j < 16 ; j++){
+          cipher_buffer[i+j] = buffer_tmp[j];
+        }
+      }
+      client.println((char*) cipher_buffer);
+            
       delay(400);
 
       //Receiving update information

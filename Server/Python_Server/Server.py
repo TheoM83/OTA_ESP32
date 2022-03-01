@@ -3,6 +3,8 @@ import socket
 import threading
 from Device import Device
 from Database import Database
+from Encryption import Encryption
+import base64
 
 #PARAMETERS
 Database_user = 'root'
@@ -10,12 +12,19 @@ Database_password = 'MyP4ssMySqL'
 Database_host = '127.0.0.1'
 Database_name = 'esp32_maintainer'
 
+AES_key = "0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78";
+
 #CODE
+enc = Encryption(AES_key)
 
 def acceptClient(client, addr, db):
     content = client.recv(32)
-    content = content.decode("utf-8")
-    information = content.split("~")
+    content = enc.decrypt(content)
+    content = content.decode()
+    information = content.split("/")
+    information = information[0]
+    print(information)
+    information = information.split("~")
     IP = addr[0]
 
     device = Device(information[0],information[1],information[2],IP)
@@ -65,6 +74,7 @@ def acceptClient(client, addr, db):
 
 
 def Server():
+
     #connecting to database
     print("Connecting to database")
     db = Database(Database_user, Database_password, Database_host, Database_name)
@@ -79,7 +89,6 @@ def Server():
     #accepting connection and reading information
     while True :
         client, addr = s.accept()
-        print("accept")
         threading.Thread(target=acceptClient, args=(client, addr, db)).run()
     
 Server()
