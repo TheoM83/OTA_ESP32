@@ -2,9 +2,6 @@
 
 Creating a secure ESP32 OTA update manager and bootloader based on a Python server, MySQL and using TCP connections to communicate with the device
 
-**/!\ Warning this project is in developpement and don't have yet securities. Tcp exchanges are in clear text !!!**
-
-
 ## Goal :
   - The GUI is easy to use and intuitive
   - The system is easy to set up and secure
