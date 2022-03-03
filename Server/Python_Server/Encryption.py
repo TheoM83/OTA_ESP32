@@ -1,6 +1,4 @@
 from Crypto.Cipher import AES
-import base64
-from Crypto.Util.Padding import pad, unpad
 
 class Encryption:
 

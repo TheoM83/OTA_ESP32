@@ -20,4 +20,8 @@ Creating a secure ESP32 OTA update manager and bootloader based on a Python serv
   - On the GUI, authorize the devices you want, add the updates and activate them.
   
 ## Known bugs :
-  - Memory corruption if too much OTA updates are done or the updates are not finished... To resolve just upload the code with the cable.
+  - Memory corruption can occur.
+
+## Known vulnerabilities :
+  - The binary update is not encrypted
+  - The encrypted identification can be heard and repeated on another device

@@ -6,36 +6,31 @@
 #include <AES.h>
 #include <string.h>
 
-//REMOTE PYTHON SERVER
-const char * host = "192.168.1.14";
-const uint16_t port = 8090;
-
 //DEVICE INFORMATIONS
 String ID = WiFi.macAddress();
 String Name = "device-TEST";
 String Version = "1";
 
+//ARDUINO DISPLAY
+int BAUD = 115200;
+
 //WIFI INFORMATIONS
 const char* ssid = "Livebox-3f60";
 const char* password =  "AA7CAD6FED74FAC79D3ED4E3C2";
 
+//REMOTE PYTHON SERVER
+const char * host = "192.168.1.14";
+const uint16_t port = 8090;
+
 //AES KEY
 byte key[32] = {0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78};
 String padding_character = "/";
-
-//VARIABLES
-AES128 aes128;
-byte buffer[256];
-byte cipher_buffer[256];
-byte buffer_tmp[17];
-
+  
 //FUNCTIONS
 
 void WifiConnect(){
-  Serial.begin(115200);
-  Serial.println("My mac address : "+String(ID)+'\n');
   WiFi.begin(ssid, password);
-  Serial.println("Connecting to "+String(ssid)+'\n');
+  Serial.println("Connecting to "+String(ssid));
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);
@@ -48,7 +43,13 @@ void WifiConnect(){
 
 void OTA()
 {
+  AES128 aes128;
+  byte buffer[256];
+  byte cipher_buffer[256];
+  byte buffer_tmp[17];
+  size_t written;
   WiFiClient client;
+  
   if (!client.connect(host, port)) 
   {
     Serial.println("Connection to host failed");
@@ -58,8 +59,8 @@ void OTA()
   {
       aes128.setKey(key, aes128.keySize());
       //Sending device information
-      Serial.println("Connected to "+String(host));
-      Serial.println("Sending information");
+      Serial.println("Connected to : "+String(host));
+      Serial.println("Sending information...");
 
       //Prepare Message
       String message = ""+ID+"~"+Name+"~"+Version;
@@ -81,27 +82,26 @@ void OTA()
       delay(400);
 
       //Receiving update information
-      Serial.println("Checking Firmware");
+      Serial.println("Checking Firmware...");
       String stringFileSize = client.readStringUntil('\n');
-      Serial.println(stringFileSize);
 
       //Starting the update
       
       int fileSize = atoi(stringFileSize.c_str());
       bool start = Update.begin(fileSize);
       if (start) {
-      Serial.println("Downloading and applying OTA update...");
-      size_t written = Update.writeStream(client);
+      Serial.println("  Downloading and applying the update...");
+      written = Update.writeStream(client);
 
       if (written == fileSize) 
       {
-        Serial.println("Written : " + String(written) + " successfully");
+        Serial.println("    Written : " + String(written)+ "/" + String(fileSize));
       } else {
-        Serial.println("Written only : " + String(written) + "/" + String(fileSize) + ". Retry?" );
+        Serial.println("    Written only : " + String(written) + "/" + String(fileSize) + ". Retry?" );
       }
       if (Update.end()) 
       {
-        Serial.println("Update finished!");
+        Serial.println("      Update finished!");
         if (Update.isFinished()) 
         {
           Serial.println("Rebooting.");
@@ -115,19 +115,20 @@ void OTA()
       else 
       {
         Serial.println("Error...");
+        client.flush();
       }
     } 
     else
     {
-      Serial.println("No firmware");
+      Serial.println("  No firmware");
+      client.flush();
     }
-     
-    client.flush();  
   }
 }
 
 void setup()
 {
+  Serial.begin(BAUD);
   WifiConnect();
   OTA();
   //...
