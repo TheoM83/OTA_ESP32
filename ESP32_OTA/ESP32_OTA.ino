@@ -8,18 +8,18 @@
 
 //DEVICE INFORMATIONS
 String ID = WiFi.macAddress();
-String Name = "device-TEST";
-String Version = "1";
+String Name = "....";
+String Version = "....";
 
 //ARDUINO DISPLAY
 int BAUD = 115200;
 
 //WIFI INFORMATIONS
-const char* ssid = "Livebox-3f60";
-const char* password =  "AA7CAD6FED74FAC79D3ED4E3C2";
+const char* ssid = "....";
+const char* password =  "....";
 
 //REMOTE PYTHON SERVER
-const char * host = "192.168.1.14";
+const char * host = "....";
 const uint16_t port = 8090;
 
 //AES KEY
