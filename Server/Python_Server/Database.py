@@ -60,7 +60,7 @@ class Database:
 
     def insertDevice(self, uid, deviceName, authorized):
         mycursor = self.mydb.cursor()
-        sql = "INSERT INTO device (name, uid) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO device (uid, name, authorized) VALUES (%s, %s, %s)"
         val = (uid, deviceName, authorized)
         mycursor.execute(sql, val)
         self.mydb.commit()
@@ -87,10 +87,10 @@ class Database:
         myresult = mycursor.fetchone()
         return myresult[0]
 
-    def verifyDevice(self, uid, deviceName):
+    def verifyDevice(self, uid):
         mycursor = self.mydb.cursor()
-        sql = "select id from device where name = %s and uid = %s"
-        val = (deviceName, uid)
+        sql = "select id from device where uid = %s"
+        val = ([uid])
         mycursor.execute(sql, val)
         myresult = mycursor.fetchall()
         if (len(myresult) > 0):

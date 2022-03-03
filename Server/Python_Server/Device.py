@@ -13,7 +13,7 @@ class Device:
         database.insertDevice(self.ID, self.Name, False)
 
     def isRegistered(self, database):
-        return database.verifyDevice(self.ID, self.Name)
+        return database.verifyDevice(self.ID)
 
     def isAuthorized(self, database):
         return database.isAuthorized(self.Name, self.ID)

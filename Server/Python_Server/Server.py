@@ -23,17 +23,16 @@ def acceptClient(client, addr, db):
         content = content.decode()
         information = content.split("/")
         information = information[0]
-        print(information)
         information = information.split("~")
         IP = addr[0]
 
         device = Device(information[0],information[1],information[2],IP)
-        device.setActivity(db)
         print(device)
 
         #check if the device is registered on the database
         if device.isRegistered(db):
             print(" ->Device Registered")
+            device.setActivity(db)
             
             #check if the device is authorized
             if device.isAuthorized(db):
@@ -68,15 +67,15 @@ def acceptClient(client, addr, db):
                             print("Remote uploads not available for now !")
                             #Code :)
                     else:
-                        print("no update available")
+                        print("No update available")
             else:
-                print("not authorized")
+                print("Not authorized")
 
         else:
+            print("Registering device")
             device.addDevice(db)
     except:
         print("Error")
-    #client.close()
 
 
 def Server():
