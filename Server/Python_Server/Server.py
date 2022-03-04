@@ -67,7 +67,7 @@ def acceptClient(client, addr, db):
                             print("Remote uploads not available for now !")
                             #Code :)
                     else:
-                        print("No update available")
+                        print("   No update available")
             else:
                 print("Not authorized")
 
@@ -75,7 +75,7 @@ def acceptClient(client, addr, db):
             print("Registering device")
             device.addDevice(db)
     except:
-        print("Error")
+        print("Device error")
 
 
 def Server():
@@ -93,7 +93,10 @@ def Server():
 
     #accepting connection and reading information
     while True :
-        client, addr = s.accept()
-        threading.Thread(target=acceptClient, args=(client, addr, db)).run()
+        try: 
+            client, addr = s.accept()
+            threading.Thread(target=acceptClient, args=(client, addr, db)).run()
+        except:
+            print("Thread error")
     
 Server()
