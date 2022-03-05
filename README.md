@@ -13,6 +13,9 @@ Creating a secure ESP32 OTA update manager and bootloader based on a Python serv
   - MYSQL server
   
 ## How to use :
+
+[![TUTORIAL](https://i.imgur.com/zZghdE0.png)](https://www.youtube.com/watch?v=a2yT_yt2z88)
+
   - Clone the project
   - Import the MYSQL database
   - Modify the Python Server.py and GUI.py parameters depending on your Mysql database authentification and execute them.
@@ -21,6 +24,8 @@ Creating a secure ESP32 OTA update manager and bootloader based on a Python serv
   
 ## Known bugs :
   - Memory corruption can occur.
+  - Errors when uploading firmware (several tries expected)
+  - Display not working for both server and esp32
 
 ## Known vulnerabilities :
   - The binary update is not encrypted
