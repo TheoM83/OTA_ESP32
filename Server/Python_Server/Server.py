@@ -6,8 +6,8 @@ from Database import Database
 from Encryption import Encryption
 
 #PARAMETERS
-Database_user = 'root'
-Database_password = 'MyP4ssMySqL'
+Database_user = '....'
+Database_password = '....'
 Database_host = '127.0.0.1'
 Database_name = 'esp32_maintainer'
 
@@ -64,18 +64,20 @@ def acceptClient(client, addr, db):
                             print("\nFirmware sent")
 
                         else:
-                            print("Remote uploads not available for now !")
+                            print("\n /!\\ Remote uploads not available for now !")
                             #Code :)
                     else:
-                        print("   No update available")
+                        print("   x Already up-to-date")
+                else:
+                    print("   x No update available")
             else:
-                print("Not authorized")
+                print("  x Not authorized")
 
         else:
             print("Registering device")
             device.addDevice(db)
     except:
-        print("Device error")
+        print("\n /!\\ Device error")
 
 
 def Server():
@@ -97,6 +99,6 @@ def Server():
             client, addr = s.accept()
             threading.Thread(target=acceptClient, args=(client, addr, db)).run()
         except:
-            print("Thread error")
+            print("\n /!\\ Thread error")
     
 Server()

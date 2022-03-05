@@ -3,8 +3,8 @@ from Database import Database
 from decimal import Decimal
 
 #PARAMETERS
-Database_user = 'root'
-Database_password = 'MyP4ssMySqL'
+Database_user = '....'
+Database_password = '....'
 Database_host = '127.0.0.1'
 Database_name = 'esp32_maintainer'
 
